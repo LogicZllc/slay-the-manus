@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getAvailableNextNodes, moveToNode, getMapProgress } from '@/lib/mapGeneration';
+import { getAvailableNextNodes, getMapProgress } from '@/lib/mapGeneration';
 import { MapNode } from '@/types/game';
 
 export default function MapUI() {
@@ -23,16 +23,12 @@ export default function MapUI() {
     if (node.type === 'monster' || node.type === 'elite' || node.type === 'boss') {
       startCombat([node.type === 'elite' ? 'cultist' : 'cultist']);
     } else if (node.type === 'shop') {
-      // TODO: Implement shop
       console.log('Shop not yet implemented');
     } else if (node.type === 'rest') {
-      // TODO: Implement rest site
       console.log('Rest site not yet implemented');
     } else if (node.type === 'treasure') {
-      // TODO: Implement treasure room
       console.log('Treasure room not yet implemented');
     } else if (node.type === 'event') {
-      // TODO: Implement event
       console.log('Event not yet implemented');
     }
   };
@@ -143,18 +139,17 @@ export default function MapUI() {
                         <button
                           key={node.id}
                           onClick={() => {
-                            if (isAvailable) {
+                            if (isAvailable && !isCurrentNode) {
                               handleNodeClick(node);
                             }
                           }}
-                          disabled={!isAvailable && !isCurrentNode}
                           className={`
                             w-20 h-20 rounded-lg border-2 transition-all duration-300 flex items-center justify-center text-2xl font-bold
                             ${isCurrentNode ? 'ring-4 ring-amber-400 scale-110' : ''}
-                            ${isAvailable ? 'cursor-pointer' : isVisited ? 'opacity-50 cursor-default' : 'opacity-30 cursor-not-allowed'}
+                            ${isAvailable && !isCurrentNode ? 'cursor-pointer' : isVisited ? 'opacity-50 cursor-default' : 'opacity-30 cursor-not-allowed'}
                             ${getNodeColor(node.type)}
                           `}
-                          title={`${node.type} (${node.visited ? 'visited' : 'unvisited'})`}
+                          title={`${node.type} (${isCurrentNode ? 'current' : isVisited ? 'visited' : isAvailable ? 'available' : 'unavailable'})`}
                         >
                           {getNodeIcon(node.type)}
                         </button>
