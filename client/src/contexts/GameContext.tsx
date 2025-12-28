@@ -11,6 +11,7 @@ import {
   getCombatWinner,
 } from '@/lib/gameState';
 import { ENEMIES } from '@/lib/constants';
+import { generateMap } from '@/lib/mapGeneration';
 
 interface GameContextType {
   gameState: GameState | null;
@@ -35,7 +36,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true);
       setError(null);
-      const newGameState = initializeGameState(characterId);
+      let newGameState = initializeGameState(characterId);
+      const seed = Math.random();
+      newGameState.currentMap = generateMap(1, seed);
       setGameState(newGameState);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to start new run');
